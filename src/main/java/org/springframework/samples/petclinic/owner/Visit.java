@@ -24,6 +24,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * Simple JavaBean domain object representing a visit.
@@ -37,6 +38,7 @@ public class Visit extends BaseEntity {
 
 	@Column(name = "visit_date")
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@NotNull(message = "Date cannot be null")
 	private LocalDate date;
 
 	@NotBlank
@@ -54,6 +56,12 @@ public class Visit extends BaseEntity {
 	}
 
 	public void setDate(LocalDate date) {
+		if (date == null) {
+			throw new IllegalArgumentException("Date cannot be null");
+		}
+		if (date.isBefore(LocalDate.now())) {
+			throw new IllegalArgumentException("Date cannot be in the past");
+		}
 		this.date = date;
 	}
 
@@ -62,6 +70,9 @@ public class Visit extends BaseEntity {
 	}
 
 	public void setDescription(String description) {
+		if (description == null || description.isBlank()) {
+			throw new IllegalArgumentException("Description cannot be blank");
+		}
 		this.description = description;
 	}
 
